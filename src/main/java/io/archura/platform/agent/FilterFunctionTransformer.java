@@ -83,8 +83,12 @@ public class FilterFunctionTransformer implements ClassFileTransformer {
     }
 
     private String getAllowCheckCode() {
-        return "for (int i=0;i<Thread.currentThread().getStackTrace().length;i++) {\n" +
-                "                        if(Thread.currentThread().getStackTrace()[i].getClassName().contains(\"" + executorClassName + "\")){\n" +
+        return "                     for (int i=0; i< Thread.currentThread().getStackTrace().length; i++) {\n" +
+                "                        final String className = Thread.currentThread().getStackTrace()[i].getClassName();\n" +
+                "                        if(className.contains(\"jdk.internal.net.http.HttpClientImpl\")) {\n" +
+                "                            break;\n" +
+                "                        }\n" +
+                "                        if(className.contains(\"" + executorClassName + "\")){\n" +
                 "                            throw new RuntimeException(\"Filters/Functions are not allowed to create Sockets/Threads.\");\n" +
                 "                        }\n" +
                 "                    };";
